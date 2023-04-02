@@ -1,26 +1,26 @@
-# generate imports for helper functions for similarity based methods  
 import scipy.stats as stats
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 
-#generate matrices U, V and R from Gauss. distributions
+#generate matrices U, V and R from Gaussisan distributions
 # mu: mean of the Gauss. distribution
 # sigma_u: standard deviation of the Gauss. distribution for U
 # sigma_v: standard deviation of the Gauss. distribution for V
 # sigma: standard deviation of the Gauss. distribution for noise
 # alpha: number of latent features
 
-def generate_U_V_R(mu, sigma_u, sigma_v, sigma, alpha):
-    U = np.random.normal(mu, sigma_u, size=(D,N))
-    V = np.random.normal(mu, sigma_v, size=(D,M*alpha))
-    noise = np.random.normal(mu, sigma, size=(N,M*alpha)) 
+def generate_U_V_R(mu, sigma_u, sigma_v, sigma, alpha, d_dim, n_users, n_movies):
+    U = np.random.normal(mu, sigma_u, size = (d_dim,n_users))
+    V = np.random.normal(mu, sigma_v, size = (d_dim,n_movies*alpha))
+    noise = np.random.normal(mu, sigma, size = (n_users,n_movies*alpha)) 
     R = np.matmul(U.T,V) +noise
     return U, V, R
 
 #map values to discrete ratings 
 # x: value to be mapped
+
 def condition(x):
     if x<-2:
         return 1
@@ -37,33 +37,37 @@ def condition(x):
 # U: matrix U
 # user_i: user index
 
-def similarity_list(U, user_i): 
-    df_U = pd.DataFrame(U)
-    sim_array= cosine_similarity(df_U)[user_i] 
-    df_U['similarity_u1']= sim_array.tolist()
-    df_U= df_U.sort_values(by= 'similarity_u1', ascending= False)
-    user1_sim_list= df_U.index
+def similarity_list(A, user_i): 
+    df_A = pd.DataFrame(A)
+    sim_array= cosine_similarity(df_A)[user_i] 
+    df_A['similarity_u1']= sim_array.tolist()
+    df_A= df_A.sort_values(by= 'similarity_u1', ascending= False)
+    user1_sim_list= df_A.index
     return user1_sim_list, sim_array
 
-#compute kendalltau ranking similarity of 2 ranking lists for k_best rankings
-# u1_list_U: list of users sorted by similarity to user 1 in matrix U
-# u1_list_V: list of users sorted by similarity to user 1 in matrix V
+#compute kendalltau ranking similarity of 2 ranking lists from matrices A and B for k_best rankings
+# A_list: list of users sorted by similarity to user 1 in matrix A
+# B_list: list of users sorted by similarity to user 1 in matrix B
 # k_best: number of best rankings to be considered
 
-def ranking_similarity(u1_list_U, u1_list_V, k_best):
-    tau, p_value = stats.kendalltau(u1_list_U[:k_best], u1_list_V[:k_best])
+def ranking_similarity(A_list, B_list, k_best):
+    tau, p_value = stats.kendalltau(A_list[:k_best], B_list[:k_best])
     return tau
 
-#compute average of kendalltau similarity for all users for given matrices U and R
+#compute average of kendalltau ranking similarity for all users for given matrices A and B
+# A: matrix A
+# B: matrix B
+# n_users: number of users
+# k_best: number of best rankings to be considered
 
-def sim_avg_users(A, B):
+def sim_avg_users(A, B, n_users, k_best):
     sum_similarities= 0
-    for user_i in range(N):
+
+    for user_i in range(n_users):
         _, similarity_list_A = similarity_list(A, user_i)
         _, similarity_list_B = similarity_list(B, user_i)
-        # print("user: ", user_i, "\n similarity U:\n", similarity_list_U, "\n similarity U_svd:\n", similarity_list_R)
         kd_tau = ranking_similarity(similarity_list_A, similarity_list_B, k_best)
-        # print("kendall tau:", kd_tau)
         sum_similarities+= kd_tau
-    return sum_similarities/N    
+        
+    return sum_similarities/n_users    
         
