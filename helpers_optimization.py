@@ -35,8 +35,8 @@ def objective_function_U(U, R, V, sigma_u, sigma_v, sigma, d_dims, n_users):
 # n_movies: number of movies
 # alpha: scale factor for M
 
-def objective_function_V(V, R, U, sigma_u, sigma_v, sigma, alpha, d_dims, n_movies):
-    V = V.reshape((d_dims, n_movies*alpha))
+def objective_function_V(V, R, U, sigma_u, sigma_v, sigma, d_dims, n_movies):
+    V = V.reshape((d_dims, n_movies))
     lambda_U = sigma/sigma_u
     lambda_V = sigma/sigma_v
     error = R - np.dot(U.T, V)

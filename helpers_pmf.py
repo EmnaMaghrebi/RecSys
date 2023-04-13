@@ -5,11 +5,9 @@ import pandas as pd
 #map values to discrete ratings 
 # x: value to be mapped
 def condition(x):
-    if x<=-2:
-        return 0
-    elif x>-2 and x<=-1:
+    if x<-2:
         return 1
-    elif x>=-1 and x<=-0.5:
+    elif x>=-2 and x<=-0.5:
         return 2
     elif x>-0.5 and x<=0.5:
         return 3
