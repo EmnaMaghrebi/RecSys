@@ -21,7 +21,7 @@ def objective_function_U(U, R, V, sigma_u, sigma_v, sigma, d_dims, n_users):
     lambda_V = sigma/sigma_v
     error = R - np.dot(U.T, V)
     regularization_term = lambda_U/2 * np.linalg.norm(U)**2 + lambda_V/2 * np.linalg.norm(V)**2
-    return  np.sum(error**2)*1/2 + regularization_term
+    return  np.linalg.norm(error)**2 + regularization_term
 
 
 # define the objective function to optimize wrt to V
@@ -41,7 +41,7 @@ def objective_function_V(V, R, U, sigma_u, sigma_v, sigma, d_dims, n_movies):
     lambda_V = sigma/sigma_v
     error = R - np.dot(U.T, V)
     regularization_term = lambda_U/2 * np.linalg.norm(U)**2 + lambda_V/2 * np.linalg.norm(V)**2
-    return  np.sum(error**2)*1/2 + regularization_term
+    return  np.linalg.norm(error)**2 + regularization_term
 
 
 #compute scaled Frobenius norm to be independent of the size of the compared matrices 
@@ -51,8 +51,8 @@ def objective_function_V(V, R, U, sigma_u, sigma_v, sigma, d_dims, n_movies):
 # N: length of matrix A and B
 # return: scaled Frobenius norm  
 
-def frob(A, B, M):
-    return np.linalg.norm(A - B, 'fro')/np.sqrt(M)
+def frob(A, B):
+    return np.linalg.norm(A - B, 'fro')
 
 
 #Procrustes norm
