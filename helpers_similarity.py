@@ -3,6 +3,10 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
+# HELPER FUNCTION FOR TASK 1 AND 2
+# REWRITE THE COMMENTS 
+""""
+"""
 
 #generate matrices U, V and R from Gaussisan distributions
 # mu: mean of the Gauss. distribution
@@ -12,6 +16,9 @@ import numpy as np
 # alpha: number of latent features
 
 def generate_U_V_R(mu, sigma_u, sigma_v, sigma, d_dim, n_users, n_movies):
+    """"
+    """
+
     U = np.random.normal(mu, sigma_u, size = (d_dim,n_users))
     V = np.random.normal(mu, sigma_v, size = (d_dim,n_movies))
     noise = np.random.normal(mu, sigma, size = (n_users,n_movies)) 
