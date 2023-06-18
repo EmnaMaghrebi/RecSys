@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.spatial import procrustes
+from scipy.linalg import orthogonal_procrustes
 
 def objective_function_U(U, R, V, sigma_u, sigma_v, sigma, d_dims, n_users):
     """
@@ -64,3 +65,25 @@ def procrustes_norm(A, B, N):
     """
     _, _, disparity = procrustes(A, B)
     return disparity / np.sqrt(N)
+
+
+def orth_procrustes(X, Y, len_X):
+    """
+    Compute the Procrustes solution (the optimal rotation and scaling) to minimize the 
+    difference between two matrices, and return the root mean square deviation.
+
+    Parameters:
+    X: The first matrix.
+    Y: The second matrix.
+    len_X: The length (number of elements).
+
+    Returns:
+    The root mean square deviation between the Procrustes-transformed X and Y.
+    """
+    # Compute the Procrustes solution
+    R, scale = orthogonal_procrustes(X, Y)
+
+    # Compute the root mean square deviation
+    rss = np.linalg.norm(X @ R - Y, 'fro') / np.sqrt(len_X)
+
+    return rss
